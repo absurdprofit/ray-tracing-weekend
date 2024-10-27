@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "*.as": "typescript",
+    "iostream": "cpp",
+    "limits": "cpp",
+    "memory": "cpp"
+  }
+}

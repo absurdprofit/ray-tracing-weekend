@@ -2,9 +2,15 @@
 #include "colour.h"
 #include "vec3.h"
 
-int main() {
-  int image_width = 256;
-  int image_height = 256;
+int toPPM(const colour[]& pixels, int image_width, double aspect_ratio) {
+  int image_height = int(image_width / aspect_ratio);
+  if (image_height < 1) {
+    image_width = aspect_ratio;
+    image_height = 1;
+  }
+
+  auto viewport_height = 2.0;
+  auto viewport_width = viewport_height * (double(image_width) / image_height);
 
   std::cout << "P3\n" << image_width << ' ' << image_height << ' ' << "\n255\n";
 
