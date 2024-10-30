@@ -2,12 +2,15 @@
 #define CAMERA_H
 
 #include "hittable.h"
+#include "material.h"
 
 class camera {
   public:
     double aspect_ratio = 16.0 / 9.0;
     int image_width = 400;
     int samples_per_pixel = 10;
+    int max_depth = 10;
+
     void render(const hittable& world) {
       initialise();
 
@@ -20,7 +23,7 @@ class camera {
           colour pixel_colour(0, 0, 0);
           for (int sample = 0; sample < samples_per_pixel; sample++) {
             ray r = get_ray(i, j);
-            pixel_colour += ray_colour(r, world);
+            pixel_colour += ray_colour(r, max_depth, world);
           }
           // auto pixel_centre = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
           // auto ray_direction = pixel_centre - centre;
@@ -88,10 +91,17 @@ class camera {
       return vec3(random_double() - 0.5, random_double() - 0.5, 0);
     }
 
-    colour ray_colour(const ray& r, const hittable& world) const {
+    colour ray_colour(const ray& r, int depth, const hittable& world) const {
+      if (depth <= 0)
+        return colour(0, 0, 0);
+      
       hit_record rec;
-      if (world.hit(r, interval(0, infinity), rec)) {
-        return 0.5 * (rec.normal + colour(1, 1, 1));
+      if (world.hit(r, interval(0.001, infinity), rec)) {
+        ray scattered;
+        colour attenuation;
+        if (rec.mat->scatter(r, rec, attenuation, scattered))
+          return attenuation * ray_colour(scattered, --depth, world);
+        return colour(0, 0, 0);
       }
       vec3 unit_direction = unit_vector(r.direction());
       auto a = 0.5 * (unit_direction.y() + 1.0);
