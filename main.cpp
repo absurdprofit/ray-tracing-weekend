@@ -23,9 +23,17 @@ int main() {
   world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
   // world.add(make_shared<sphere>(point3(2.0, 0.5, -2.0), 0.5, material_vanta_black));
 
-  camera.image_width = 1920;
+  camera.image_width = 400;
   camera.samples_per_pixel = 100;
   camera.max_depth = 50;
+
+  // camera.v_fov_deg = 20;
+  camera.look_from = point3(-2, 2, 1);
+  camera.look_at = point3(0, 0, -1);
+  camera.v_up = vec3(0, 1, 0);
+
+  camera.defocus_angle_deg = 10.0;
+  camera.focus_distance = 3.4;
 
   camera.render(world);
 }
