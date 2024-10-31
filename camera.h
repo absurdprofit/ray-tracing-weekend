@@ -25,10 +25,6 @@ class camera {
             ray r = get_ray(i, j);
             pixel_colour += ray_colour(r, max_depth, world);
           }
-          // auto pixel_centre = pixel00_loc + (i * pixel_delta_u) + (j * pixel_delta_v);
-          // auto ray_direction = pixel_centre - centre;
-          // ray r(centre, ray_direction);
-          // auto pixel_colour = ray_colour(r, world);
           
           write_colour(std::cout, pixel_samples_scale * pixel_colour);
         }
@@ -99,7 +95,7 @@ class camera {
       if (world.hit(r, interval(0.001, infinity), rec)) {
         ray scattered;
         colour attenuation;
-        if (rec.mat->scatter(r, rec, attenuation, scattered))
+        if (rec.mat != nullptr && rec.mat->scatter(r, rec, attenuation, scattered))
           return attenuation * ray_colour(scattered, --depth, world);
         return colour(0, 0, 0);
       }
