@@ -23,7 +23,8 @@ class sphere : public hittable {
       auto root = (h - sqrtd) / a;
       if (!ray_t.surrounds(root)) {
         root = (h + sqrtd) / a;
-        return ray_t.surrounds(root);
+        if (!ray_t.surrounds(root))
+          return false;
       }
 
       rec.t = root;

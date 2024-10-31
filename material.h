@@ -43,7 +43,7 @@ class lambertian : public material {
 
 class metal : public material {
   public:
-    metal(const colour& albedo) : albedo(albedo) {}
+    metal(const colour& albedo, double fuzz) : albedo(albedo), fuzz(fuzz < 1 ? fuzz : 1) {}
 
     bool scatter(
       const ray& r_in,
@@ -52,6 +52,7 @@ class metal : public material {
       ray& scattered
     ) const override {
       vec3 reflected = reflect(r_in.direction(), rec.normal);
+      reflected = unit_vector(reflected) + (fuzz * random_unit_vector());
       scattered = ray(rec.p, reflected);
       attenuation = albedo;
       return true;
@@ -59,6 +60,26 @@ class metal : public material {
   
   private:
     colour albedo;
+    double fuzz;
+};
+
+class dielectric : public material {
+  public:
+    dielectric(double refractive_index) : refractive_index(refractive_index) {}
+
+    bool scatter(const ray& r_in, const hit_record& rec, colour& attenuation, ray& scattered) const override {
+      attenuation = colour(1.0, 1.0, 1.0);
+      double ri = rec.front_face ? (1.0 / refractive_index) : refractive_index;
+
+      vec3 unit_direction = unit_vector(r_in.direction());
+      vec3 refracted = refract(unit_direction, rec.normal, ri);
+
+      scattered = ray(rec.p, refracted);
+      return true;
+    }
+
+  private:
+    double refractive_index;
 };
 
 class vanta_black : public material {
