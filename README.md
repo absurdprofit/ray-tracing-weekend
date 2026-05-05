@@ -25,5 +25,5 @@ The project renders simple 3D scenes using spheres, materials, lighting approxim
 Using `g++`:
 
 ```bash
-g++ -O2 main.cpp -o main > image.ppm
+g++ -O2 main.cpp -o main && ./main > image.ppm
 ```
